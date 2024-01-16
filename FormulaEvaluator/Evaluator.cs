@@ -18,11 +18,33 @@ namespace FormulaEvaluator
             {
                 if (CheckExpression(substrings[i]) == 0)
                 {
-                    if (CheckExpression(OperStack.Peek()) == 2)
+                    int current = int.Parse(substrings[i]);
+
+                    if (CheckExpression(OperStack.Peek()) == 3 || CheckExpression(OperStack.Peek()) == 4)
+                    {
+                        OperStack.Pop();
+                        int temp = ValStack.Pop();
+                        if (CheckExpression(OperStack.Peek()) == 3)
+                        {
+                            ValStack.Push(temp * current);
+                        }
+                        else
+                        {
+                            ValStack.Push(temp / current);
+                        }
+                    }
+                    else
+                    {
+                        ValStack.Push(int.Parse(substrings[i]));
+                    }
+                }
+                if (CheckExpression(substrings[i]) > 0)
+                {
+                    if (CheckExpression(substrings[i]) == 6)
                     {
 
                     }
-                    ValStack.Push(Int32.Parse(substrings[i]));
+                    OperStack.Push(substrings[i]);
                 }
 
             }
@@ -41,21 +63,29 @@ namespace FormulaEvaluator
             {
                 return 0;
             }
-            else if (expression.Equals("+") || expression.Equals("-"))
+            else if (expression.Equals("+"))
             {
                 return 1;
             }
-            else if (expression.Equals("/") || expression.Equals("*"))
+            else if (expression.Equals("-"))
             {
                 return 2;
             }
-            else if (expression.Equals("("))
+            else if (expression.Equals("*"))
             {
                 return 3;
             }
-            else if (expression.Equals(")"))
+            else if (expression.Equals("/"))
             {
                 return 4;
+            }
+            else if (expression.Equals("("))
+            {
+                return 5;
+            }
+            else if (expression.Equals(")"))
+            {
+                return 6;
             }
             else
             {
