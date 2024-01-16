@@ -18,8 +18,13 @@ namespace FormulaEvaluator
             {
                 if (CheckExpression(substrings[i]) == 0)
                 {
+                    if (CheckExpression(OperStack.Peek()) == 2)
+                    {
 
+                    }
+                    ValStack.Push(Int32.Parse(substrings[i]));
                 }
+
             }
 
             return ValStack.Pop();
@@ -32,7 +37,7 @@ namespace FormulaEvaluator
         /// <returns></returns>
         private static int CheckExpression(String expression)
         {
-            if (expression is int)
+            if (int.TryParse(expression, out _))
             {
                 return 0;
             }
