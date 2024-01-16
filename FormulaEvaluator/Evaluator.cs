@@ -16,7 +16,7 @@ namespace FormulaEvaluator
 
             for (int i = 0; i < substrings.Length; i++)
             {
-                if (CheckExpression(substrings[i]))
+                if (CheckExpression(substrings[i]) == 0)
                 {
 
                 }
@@ -25,14 +25,37 @@ namespace FormulaEvaluator
             return ValStack.Pop();
         }
 
-        private static Boolean CheckExpression(String expression)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        private static int CheckExpression(String expression)
         {
             if (expression is int)
             {
-                return true;
+                return 0;
             }
-
-            return false;
+            else if (expression.Equals("+") || expression.Equals("-"))
+            {
+                return 1;
+            }
+            else if (expression.Equals("/") || expression.Equals("*"))
+            {
+                return 2;
+            }
+            else if (expression.Equals("("))
+            {
+                return 3;
+            }
+            else if (expression.Equals(")"))
+            {
+                return 4;
+            }
+            else
+            {
+                return -1;
+            }
         }
     }
 
