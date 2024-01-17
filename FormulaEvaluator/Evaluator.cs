@@ -19,76 +19,90 @@ namespace FormulaEvaluator
             {
                 if (CheckExpression(substrings[i]) == 0)
                 {
-                    HandleNumericExpression(substrings[i], OperStack, ValStack);
-                }
+                    int current = int.Parse(substrings[i]);
 
+                    if (OperStack.Count > 0 && (CheckExpression(OperStack.Peek()) == 3 || CheckExpression(OperStack.Peek()) == 4))
+                    {
+                        int temp = ValStack.Pop();
+
+                        if (CheckExpression(OperStack.Pop()) == 3)
+                        {
+                            ValStack.Push(temp * current);
+                        }
+                        else
+                        {
+                            ValStack.Push(temp / current);
+                        }
+                    }
+                    else
+                    {
+                        ValStack.Push(current);
+                    }
+                }
                 if (CheckExpression(substrings[i]) > 0)
                 {
                     if (CheckExpression(substrings[i]) == 6)
                     {
-                        HandleClosingParenthesis(OperStack, ValStack);
+                        while (OperStack.Count > 0 && CheckExpression(OperStack.Peek()) != 5)
+                        {
+                            if ((CheckExpression(OperStack.Peek()) == 3 || CheckExpression(OperStack.Peek()) == 4))
+                            {
+                                int num1 = ValStack.Pop();
+                                int num2 = ValStack.Pop();
+
+                                if (CheckExpression(OperStack.Pop()) == 3)
+                                {
+                                    ValStack.Push(num2 * num1);
+                                }
+                                else
+                                {
+                                    ValStack.Push(num2 / num1);
+                                }
+                            }
+                            if ((CheckExpression(OperStack.Peek()) == 1 || CheckExpression(OperStack.Peek()) == 2))
+                            {
+                                int num1 = ValStack.Pop();
+                                int num2 = ValStack.Pop();
+
+                                if (CheckExpression(OperStack.Pop()) == 1)
+                                {
+                                    ValStack.Push(num2 + num1);
+                                }
+                                else
+                                {
+                                    ValStack.Push(num2 - num1);
+                                }
+                            }
+                        }
+                       
+                        OperStack.Pop();
                     }
-                    OperStack.Push(substrings[i]);
+                    else
+                    {
+                        OperStack.Push(substrings[i]);
+                    }
                 }
             }
 
-            HandleRemainingOperations(OperStack, ValStack);
-
-            return ValStack.Pop();
-        }
-
-        private static void HandleNumericExpression(string substring, Stack<string> OperStack, Stack<int> ValStack)
-        {
-            int current = int.Parse(substring);
-
-            if (CheckExpression(OperStack.Peek()) == 3 || CheckExpression(OperStack.Peek()) == 4)
-            {
-                int temp = ValStack.Pop();
-                HandleBinaryOperation(temp, current, OperStack, ValStack);
-            }
-            else
-            {
-                ValStack.Push(current);
-            }
-        }
-
-        private static void HandleBinaryOperation(int num1, int num2, Stack<string> OperStack, Stack<int> ValStack)
-        {
-            if (CheckExpression(OperStack.Pop()) == 3)
-            {
-                ValStack.Push(num2 * num1);
-            }
-            else
-            {
-                ValStack.Push(num2 / num1);
-            }
-        }
-
-        private static void HandleClosingParenthesis(Stack<string> OperStack, Stack<int> ValStack)
-        {
-            while (CheckExpression(OperStack.Peek()) != 5)
-            {
-                if (CheckExpression(OperStack.Peek()) == 3 || CheckExpression(OperStack.Peek()) == 4)
-                {
-                    HandleBinaryOperation(ValStack.Pop(), ValStack.Pop(), OperStack, ValStack);
-                }
-                if (CheckExpression(OperStack.Peek()) == 1 || CheckExpression(OperStack.Peek()) == 2)
-                {
-                    HandleBinaryOperation(ValStack.Pop(), ValStack.Pop(), OperStack, ValStack);
-                }
-            }
-            OperStack.Pop();
-        }
-
-        private static void HandleRemainingOperations(Stack<string> OperStack, Stack<int> ValStack)
-        {
             while (OperStack.Count > 0)
             {
                 if (CheckExpression(OperStack.Peek()) == 1 || CheckExpression(OperStack.Peek()) == 2)
                 {
-                    HandleBinaryOperation(ValStack.Pop(), ValStack.Pop(), OperStack, ValStack);
+                    int num1 = ValStack.Pop();
+                    int num2 = ValStack.Pop();
+
+                    if (OperStack.Count > 0 && CheckExpression(OperStack.Pop()) == 1)
+                    {
+                        ValStack.Push(num2 + num1);
+                    }
+                    else
+                    {
+                        ValStack.Push(num2 - num1);
+                    }
                 }
             }
+
+            return ValStack.Pop();
         }
 
         /// <summary>
