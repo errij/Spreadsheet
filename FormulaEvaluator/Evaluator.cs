@@ -74,8 +74,8 @@ namespace FormulaEvaluator
                                 }
                             }
                         }
-                        
 
+                        OperStack.Pop();
                     }
                     else
                     {
