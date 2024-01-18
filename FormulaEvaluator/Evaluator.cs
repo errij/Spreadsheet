@@ -15,11 +15,11 @@ namespace FormulaEvaluator
             var OperStack = new Stack<String>(); // Operation stack
             var ValStack = new Stack<int>();    // Value stack
 
-            for (int i = 0; i < substrings.Length; i++)
+            foreach (string x in substrings)
             {
-                if (CheckExpression(substrings[i]) == 0)
+                if (CheckExpression(x) == 0)
                 {
-                    int current = int.Parse(substrings[i]);
+                    int current = int.Parse(x);
 
                     if (OperStack.Count > 0 && (CheckExpression(OperStack.Peek()) == 3 || CheckExpression(OperStack.Peek()) == 4))
                     {
@@ -39,66 +39,58 @@ namespace FormulaEvaluator
                         ValStack.Push(current);
                     }
                 }
-                if (CheckExpression(substrings[i]) > 0)
+                else if (CheckExpression(x) == 6)
                 {
-                    if (CheckExpression(substrings[i]) == 6)
+                    while (OperStack.Count > 0 && CheckExpression(OperStack.Peek()) != 5)
                     {
-                        while (OperStack.Count > 0 && CheckExpression(OperStack.Peek()) != 5)
+                        int num1 = ValStack.Pop();
+                        int num2 = ValStack.Pop();
+
+                        if (CheckExpression(OperStack.Pop()) == 1)
                         {
-                            if ((CheckExpression(OperStack.Peek()) == 3 || CheckExpression(OperStack.Peek()) == 4))
-                            {
-                                int num1 = ValStack.Pop();
-                                int num2 = ValStack.Pop();
-
-                                if (CheckExpression(OperStack.Pop()) == 3)
-                                {
-                                    ValStack.Push(num2 * num1);
-                                }
-                                else
-                                {
-                                    ValStack.Push(num2 / num1);
-                                }
-                            }
-                            if ((CheckExpression(OperStack.Peek()) == 1 || CheckExpression(OperStack.Peek()) == 2))
-                            {
-                                int num1 = ValStack.Pop();
-                                int num2 = ValStack.Pop();
-
-                                if (CheckExpression(OperStack.Pop()) == 1)
-                                {
-                                    ValStack.Push(num2 + num1);
-                                }
-                                else
-                                {
-                                    ValStack.Push(num2 - num1);
-                                }
-                            }
+                            ValStack.Push(num2 + num1);
                         }
+                        else
+                        {
+                            ValStack.Push(num2 - num1);
+                        }
+                    }
 
-                        OperStack.Pop();
-                    }
-                    else
+                    OperStack.Pop();
+
+                    if (OperStack.Count > 0 && (CheckExpression(OperStack.Peek()) == 3 || CheckExpression(OperStack.Peek()) == 4))
                     {
-                        OperStack.Push(substrings[i]);
+                        int num1 = ValStack.Pop();
+                        int num2 = ValStack.Pop();
+
+                        if (CheckExpression(OperStack.Pop()) == 3)
+                        {
+                            ValStack.Push(num2 * num1);
+                        }
+                        else
+                        {
+                            ValStack.Push(num2 / num1);
+                        }
                     }
+                }
+                else if (CheckExpression(x) > 0)
+                {
+                     OperStack.Push(x);
                 }
             }
 
             while (OperStack.Count > 0)
             {
-                if (CheckExpression(OperStack.Peek()) == 1 || CheckExpression(OperStack.Peek()) == 2)
-                {
-                    int num1 = ValStack.Pop();
-                    int num2 = ValStack.Pop();
+                int num1 = ValStack.Pop();
+                int num2 = ValStack.Pop();
 
-                    if (OperStack.Count > 0 && CheckExpression(OperStack.Pop()) == 1)
-                    {
-                        ValStack.Push(num2 + num1);
-                    }
-                    else
-                    {
-                        ValStack.Push(num2 - num1);
-                    }
+                if (CheckExpression(OperStack.Pop()) == 1)
+                {
+                    ValStack.Push(num2 + num1);
+                }
+                else
+                {
+                    ValStack.Push(num2 - num1);
                 }
             }
 
