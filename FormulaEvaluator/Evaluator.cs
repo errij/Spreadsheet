@@ -7,6 +7,13 @@ namespace FormulaEvaluator
     {
         public delegate int Lookup(String var);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="variableEvaluator"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static int Evaluate(String expression, Lookup variableEvaluator)
         {
             expression = expression.Replace(" ", "");
@@ -24,6 +31,11 @@ namespace FormulaEvaluator
                     if (CheckExpression(x) == -1 && variableEvaluator != null)
                     {
                         current = variableEvaluator(x);
+
+                        if(!(current is int))
+                        {
+                            throw new ArgumentException(x + " is not a variable!");
+                        }
                     }
                     else
                     {
@@ -89,6 +101,10 @@ namespace FormulaEvaluator
                         }
                         else
                         {
+                            if (num1 == 0)
+                            {
+                                throw new Exception("division by zero");
+                            }
                             ValStack.Push(num2 / num1);
                         }
                     }
