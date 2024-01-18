@@ -10,18 +10,34 @@ namespace FormulaEvaluator
         public static int Evaluate(String expression, Lookup variableEvaluator)
         {
             expression = expression.Replace(" ", "");
-            String[] substrings = Regex.Split(expression, "(\\()|(\\))|(-)|(\\+)|(\\*)|(/)");
+            String[] substrings = Regex.Split(expression, @"(?<=[\(\)\-\+\*/])|(?=[\(\)\-\+\*/])").Where(s => !string.IsNullOrEmpty(s)).ToArray();
 
             var OperStack = new Stack<String>(); // Operation stack
             var ValStack = new Stack<int>();    // Value stack
-
-            for (int i = 0; i < substrings.Length; i++)
+            
+            foreach (string x in substrings)
             {
-                if (CheckExpression(substrings[i]) == 0)
+                if (CheckExpression(x) == 0 || CheckExpression(x) == -1)
                 {
-                    int current = int.Parse(substrings[i]);
+                    int current;
 
-                    if (OperStack.Count > 0 || (CheckExpression(OperStack.Peek()) == 3 || CheckExpression(OperStack.Peek()) == 4))
+                    if (CheckExpression(x) == -1 && variableEvaluator != null)
+                    {
+                        current = variableEvaluator(x);
+                    }
+                    else
+                    {
+                        if (!int.TryParse(x, out current))
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            current = int.Parse(x);
+                        }
+                    }
+
+                    if (OperStack.Count > 0 && (CheckExpression(OperStack.Peek()) == 3 || CheckExpression(OperStack.Peek()) == 4))
                     {
                         int temp = ValStack.Pop();
 
@@ -31,6 +47,10 @@ namespace FormulaEvaluator
                         }
                         else
                         {
+                            if (current == 0)
+                            {
+                                throw new Exception("division by zero");
+                            }
                             ValStack.Push(temp / current);
                         }
                     }
@@ -39,30 +59,33 @@ namespace FormulaEvaluator
                         ValStack.Push(current);
                     }
                 }
-                if (CheckExpression(substrings[i]) > 0)
+                else if (CheckExpression(x) == 6)
                 {
                     if (CheckExpression(substrings[i]) == 6)
                     {
-                        while (OperStack.Count > 0 || CheckExpression(OperStack.Peek()) != 5)
+                        while (OperStack.Count > 0 && CheckExpression(OperStack.Peek()) != 5)
                         {
                             if ((CheckExpression(OperStack.Peek()) == 3 || CheckExpression(OperStack.Peek()) == 4))
                             {
                                 int num1 = ValStack.Pop();
                                 int num2 = ValStack.Pop();
 
-                                if (CheckExpression(OperStack.Pop()) == 3)
-                                {
-                                    ValStack.Push(num2 * num1);
-                                }
-                                else
-                                {
-                                    ValStack.Push(num2 / num1);
-                                }
-                            }
-                            if ((CheckExpression(OperStack.Peek()) == 1 || CheckExpression(OperStack.Peek()) == 2))
-                            {
-                                int num1 = ValStack.Pop();
-                                int num2 = ValStack.Pop();
+                        if (CheckExpression(OperStack.Pop()) == 1)
+                        {
+                            ValStack.Push(num2 + num1);
+                        }
+                        else
+                        {
+                            ValStack.Push(num2 - num1);
+                        }
+                    }
+
+                    OperStack.Pop();
+
+                    if (OperStack.Count > 0 && (CheckExpression(OperStack.Peek()) == 3 || CheckExpression(OperStack.Peek()) == 4))
+                    {
+                        int num1 = ValStack.Pop();
+                        int num2 = ValStack.Pop();
 
                                 if (CheckExpression(OperStack.Pop()) == 1)
                                 {
@@ -74,7 +97,7 @@ namespace FormulaEvaluator
                                 }
                             }
                         }
-                        
+
                         OperStack.Pop();
                     }
                     else
@@ -86,20 +109,27 @@ namespace FormulaEvaluator
 
             while (OperStack.Count > 0)
             {
-                if (CheckExpression(OperStack.Peek()) == 1 || CheckExpression(OperStack.Peek()) == 2)
-                {
-                    int num1 = ValStack.Pop();
-                    int num2 = ValStack.Pop();
+                int num1 = ValStack.Pop();
+                int num2 = ValStack.Pop();
 
-                    if (OperStack.Count > 0 && CheckExpression(OperStack.Pop()) == 1)
-                    {
-                        ValStack.Push(num2 + num1);
-                    }
-                    else
-                    {
-                        ValStack.Push(num2 - num1);
-                    }
+                if (CheckExpression(OperStack.Peek()) == 3 || CheckExpression(OperStack.Peek()) == 4)
+                {
+                    throw new Exception("There are more operators than numbers");
                 }
+
+                if (CheckExpression(OperStack.Pop()) == 1)
+                {
+                    ValStack.Push(num2 + num1);
+                }
+                else
+                {
+                    ValStack.Push(num2 - num1);
+                }
+            }
+
+            if(ValStack.Count > 1)
+            {
+                throw new Exception("There are more numbers than operators");
             }
 
             return ValStack.Pop();
