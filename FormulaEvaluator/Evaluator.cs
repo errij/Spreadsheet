@@ -84,6 +84,11 @@ namespace FormulaEvaluator
                 int num1 = ValStack.Pop();
                 int num2 = ValStack.Pop();
 
+                if (CheckExpression(OperStack.Peek()) == 3 || CheckExpression(OperStack.Peek()) == 4)
+                {
+                    throw new Exception("There are more operators than numbers");
+                }
+
                 if (CheckExpression(OperStack.Pop()) == 1)
                 {
                     ValStack.Push(num2 + num1);
@@ -92,6 +97,11 @@ namespace FormulaEvaluator
                 {
                     ValStack.Push(num2 - num1);
                 }
+            }
+
+            if(ValStack.Count > 1)
+            {
+                throw new Exception("There are more numbers than operators");
             }
 
             return ValStack.Pop();
