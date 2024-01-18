@@ -17,9 +17,18 @@ namespace FormulaEvaluator
 
             foreach (string x in substrings)
             {
-                if (CheckExpression(x) == 0)
+                if (CheckExpression(x) == 0 || CheckExpression(x) == -1)
                 {
-                    int current = int.Parse(x);
+                    int current;
+
+                    if(CheckExpression(x) == -1)
+                    {
+                        current = variableEvaluator(x);
+                    }
+                    else
+                    {
+                        current = int.Parse(x);
+                    }
 
                     if (OperStack.Count > 0 && (CheckExpression(OperStack.Peek()) == 3 || CheckExpression(OperStack.Peek()) == 4))
                     {
@@ -31,6 +40,10 @@ namespace FormulaEvaluator
                         }
                         else
                         {
+                            if (current == 0)
+                            {
+                                throw new Exception("division by zero");
+                            }
                             ValStack.Push(temp / current);
                         }
                     }
