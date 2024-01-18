@@ -14,7 +14,7 @@ namespace FormulaEvaluator
 
             var OperStack = new Stack<String>(); // Operation stack
             var ValStack = new Stack<int>();    // Value stack
-            
+
             foreach (string x in substrings)
             {
                 if (CheckExpression(x) == 0 || CheckExpression(x) == -1)
@@ -61,14 +61,10 @@ namespace FormulaEvaluator
                 }
                 else if (CheckExpression(x) == 6)
                 {
-                    if (CheckExpression(substrings[i]) == 6)
+                    while (OperStack.Count > 0 && CheckExpression(OperStack.Peek()) != 5)
                     {
-                        while (OperStack.Count > 0 && CheckExpression(OperStack.Peek()) != 5)
-                        {
-                            if ((CheckExpression(OperStack.Peek()) == 3 || CheckExpression(OperStack.Peek()) == 4))
-                            {
-                                int num1 = ValStack.Pop();
-                                int num2 = ValStack.Pop();
+                        int num1 = ValStack.Pop();
+                        int num2 = ValStack.Pop();
 
                         if (CheckExpression(OperStack.Pop()) == 1)
                         {
@@ -87,23 +83,19 @@ namespace FormulaEvaluator
                         int num1 = ValStack.Pop();
                         int num2 = ValStack.Pop();
 
-                                if (CheckExpression(OperStack.Pop()) == 1)
-                                {
-                                    ValStack.Push(num2 + num1);
-                                }
-                                else
-                                {
-                                    ValStack.Push(num2 - num1);
-                                }
-                            }
+                        if (CheckExpression(OperStack.Pop()) == 3)
+                        {
+                            ValStack.Push(num2 * num1);
                         }
-
-                        OperStack.Pop();
+                        else
+                        {
+                            ValStack.Push(num2 / num1);
+                        }
                     }
-                    else
-                    {
-                        OperStack.Push(substrings[i]);
-                    }
+                }
+                else if (CheckExpression(x) > 0)
+                {
+                    OperStack.Push(x);
                 }
             }
 
@@ -127,7 +119,7 @@ namespace FormulaEvaluator
                 }
             }
 
-            if(ValStack.Count > 1)
+            if (ValStack.Count > 1)
             {
                 throw new Exception("There are more numbers than operators");
             }
