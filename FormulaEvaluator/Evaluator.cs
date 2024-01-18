@@ -10,24 +10,31 @@ namespace FormulaEvaluator
         public static int Evaluate(String expression, Lookup variableEvaluator)
         {
             expression = expression.Replace(" ", "");
-            String[] substrings = Regex.Split(expression, "(\\()|(\\))|(-)|(\\+)|(\\*)|(/)");
+            String[] substrings = Regex.Split(expression, @"(?<=[\(\)\-\+\*/])|(?=[\(\)\-\+\*/])").Where(s => !string.IsNullOrEmpty(s)).ToArray();
 
             var OperStack = new Stack<String>(); // Operation stack
             var ValStack = new Stack<int>();    // Value stack
-
+            
             foreach (string x in substrings)
             {
                 if (CheckExpression(x) == 0 || CheckExpression(x) == -1)
                 {
                     int current;
 
-                    if(CheckExpression(x) == -1)
+                    if (CheckExpression(x) == -1 && variableEvaluator != null)
                     {
                         current = variableEvaluator(x);
                     }
                     else
                     {
-                        current = int.Parse(x);
+                        if (!int.TryParse(x, out current))
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            current = int.Parse(x);
+                        }
                     }
 
                     if (OperStack.Count > 0 && (CheckExpression(OperStack.Peek()) == 3 || CheckExpression(OperStack.Peek()) == 4))
