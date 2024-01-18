@@ -7,6 +7,6 @@ if (Evaluator.Evaluate("5+5", null) == 10)
     Console.WriteLine("Happy Day!");
 }
 
-Console.WriteLine(Evaluator.Evaluate("5*5", null));
+Console.WriteLine(Evaluator.Evaluate("5*(5+5)", null));
 
 

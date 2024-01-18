@@ -21,7 +21,7 @@ namespace FormulaEvaluator
                 {
                     int current = int.Parse(substrings[i]);
 
-                    if (OperStack.Count > 0 && (CheckExpression(OperStack.Peek()) == 3 || CheckExpression(OperStack.Peek()) == 4))
+                    if (OperStack.Count > 0 || (CheckExpression(OperStack.Peek()) == 3 || CheckExpression(OperStack.Peek()) == 4))
                     {
                         int temp = ValStack.Pop();
 
@@ -43,7 +43,7 @@ namespace FormulaEvaluator
                 {
                     if (CheckExpression(substrings[i]) == 6)
                     {
-                        while (OperStack.Count > 0 && CheckExpression(OperStack.Peek()) != 5)
+                        while (OperStack.Count > 0 || CheckExpression(OperStack.Peek()) != 5)
                         {
                             if ((CheckExpression(OperStack.Peek()) == 3 || CheckExpression(OperStack.Peek()) == 4))
                             {
@@ -74,7 +74,7 @@ namespace FormulaEvaluator
                                 }
                             }
                         }
-
+                        
                         OperStack.Pop();
                     }
                     else
