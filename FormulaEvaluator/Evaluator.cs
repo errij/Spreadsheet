@@ -11,182 +11,154 @@ namespace FormulaEvaluator
         /// Calculates an expression and evaluate number
         /// using operateors and values from string expression
         /// </summary>
-        /// <param name="expression">
-        /// string of combination of values and operators
-        /// </param>
-        /// <param name="variableEvaluator"
-        /// >delegate to lookup the variables
-        /// </param>
+        /// <param name="expression">string of combination of values and operators</param>
+        /// <param name="variableEvaluator">delegate to lookup the variables</param>
         /// <returns>evalutated integer</returns>
         /// <exception cref="Exception"></exception>
         public static int Evaluate(String expression, Lookup variableEvaluator)
         {
-            expression = expression.Replace(" ", "");
-            String[] substrings = Regex.Split(expression, @"(?<=[\(\)\-\+\*/])|(?=[\(\)\-\+\*/])").Where(s => !string.IsNullOrEmpty(s)).ToArray();
+            expression = expression.Replace(" ", ""); //removes whitespaces
+            String[] substrings = Regex.Split(expression, @"(?<=[\(\)\-\+\*/])|(?=[\(\)\-\+\*/])").Where(s => !string.IsNullOrEmpty(s)).ToArray(); //slipt string
 
             var OperStack = new Stack<String>(); // Operation stack
             var ValStack = new Stack<int>();    // Value stack
 
             foreach (string x in substrings)
             {
-                if (CheckExpression(x) == 0 || CheckExpression(x) == -1)
+                if (CheckExpression(x) == 0 || CheckExpression(x) == -1) //if x is an integer or variable
                 {
                     int current;
 
-                    if (CheckExpression(x) == -1 && variableEvaluator != null)
+                    if (CheckExpression(x) == -1 && variableEvaluator != null) //if x is a variable and delegate is not null
                     {
-                        current = variableEvaluator(x);
+                        current = variableEvaluator(x); //find the variable
 
-                        if(!(current is int))
+                        if(!(current is int)) //if not found
                         {
-                            throw new ArgumentException($"{x} is not a variable!");
+                            throw new ArgumentException($"{x} is not a variable!"); //throw an exception
                         }
                     }
-                    else
+                    else //if x is an integer
                     {
-                        if (!int.TryParse(x, out current))
-                        {
-                            continue;
-                        }
-                        else
-                        {
-                            current = int.Parse(x);
-                        }
+                        current = int.Parse(x); //parse
+                        
                     }
-
+                    //if operator stack isn't empty and top operator is either * or /
                     if (OperStack.Count > 0 && (CheckExpression(OperStack.Peek()) == 3 || CheckExpression(OperStack.Peek()) == 4))
                     {
-                        int temp = ValStack.Pop();
+                        int temp = ValStack.Pop(); //pop the value in the stack
 
-                        if (CheckExpression(OperStack.Pop()) == 3)
+                        if (CheckExpression(OperStack.Pop()) == 3) //pop the operator and if it's *
                         {
-                            ValStack.Push(temp * current);
+                            ValStack.Push(temp * current); //multiply
                         }
-                        else
+                        else //if it's /
                         {
-                            if (current == 0)
-                            {
-                                throw new Exception("division by zero");
-                            }
-                            ValStack.Push(temp / current);
+                            ValStack.Push(temp / current); //division
                         }
                     }
-                    else
+                    else //if x is either + or -
                     {
                         ValStack.Push(current);
                     }
                 }
-                else if (CheckExpression(x) == 6)
+                else if (CheckExpression(x) == 6) //if x is )
                 {
-                    while (OperStack.Count > 0 && CheckExpression(OperStack.Peek()) != 5)
+                    while (OperStack.Count > 0 && CheckExpression(OperStack.Peek()) != 5) //while operator stack isn't empty and top operator isn't (
                     {
-                        int num1 = ValStack.Pop();
-                        int num2 = ValStack.Pop();
+                        int num1 = ValStack.Pop(); //pop the top value
+                        int num2 = ValStack.Pop(); //pop the second value
 
-                        if (CheckExpression(OperStack.Pop()) == 1)
+                        if (CheckExpression(OperStack.Pop()) == 1) //pop the operator and if top operator is +
                         {
-                            ValStack.Push(num2 + num1);
+                            ValStack.Push(num2 + num1); //plus
                         }
-                        else
+                        else //if top operator is -
                         {
-                            ValStack.Push(num2 - num1);
+                            ValStack.Push(num2 - num1); //minus
                         }
                     }
 
-                    OperStack.Pop();
+                    OperStack.Pop(); //when while loop is finished pop the operator //should be ( or throw exception
 
-                    if (OperStack.Count > 0 && (CheckExpression(OperStack.Peek()) == 3 || CheckExpression(OperStack.Peek()) == 4))
+                    if (OperStack.Count > 0 && (CheckExpression(OperStack.Peek()) == 3 || CheckExpression(OperStack.Peek()) == 4)) //if there is * or / in front of (
                     {
+                        //do the process
                         int num1 = ValStack.Pop();
                         int num2 = ValStack.Pop();
 
-                        if (CheckExpression(OperStack.Pop()) == 3)
+                        if (CheckExpression(OperStack.Pop()) == 3) //multiply
                         {
                             ValStack.Push(num2 * num1);
                         }
-                        else
+                        else //division
                         {
-                            if (num1 == 0)
-                            {
-                                throw new Exception("division by zero");
-                            }
                             ValStack.Push(num2 / num1);
                         }
                     }
                 }
-                else if (CheckExpression(x) > 0)
+                else if (CheckExpression(x) > 0) //if x is an operator other than )
                 {
-                    OperStack.Push(x);
+                    OperStack.Push(x);//push to the stack
                 }
             }
 
-            while (OperStack.Count > 0)
+            while (OperStack.Count > 0) //deal with the remaining operators //should be + or - 
             {
                 int num1 = ValStack.Pop();
                 int num2 = ValStack.Pop();
 
-                if (CheckExpression(OperStack.Peek()) == 3 || CheckExpression(OperStack.Peek()) == 4)
+                if (CheckExpression(OperStack.Peek()) == 3 || CheckExpression(OperStack.Peek()) == 4) //if remaining operator is other than + or -
                 {
-                    throw new Exception("There are more operators than numbers");
+                    throw new Exception("There are more operators than numbers"); //throw exception
                 }
 
-                if (CheckExpression(OperStack.Pop()) == 1)
+                if (CheckExpression(OperStack.Pop()) == 1) //if +
                 {
                     ValStack.Push(num2 + num1);
                 }
-                else
+                else //if -
                 {
                     ValStack.Push(num2 - num1);
                 }
             }
 
-            if (ValStack.Count > 1)
+            if (ValStack.Count > 1) //if there are more than one variable
             {
-                throw new Exception("There are more numbers than operators");
+                throw new Exception("There are more numbers than operators");//throw exception
             }
 
-            return ValStack.Pop();
+            return ValStack.Pop(); //return value
         }
 
         /// <summary>
-        /// 
+        /// simply check expression type
         /// </summary>
-        /// <param name="expression"></param>
-        /// <returns></returns>
-        private static int CheckExpression(String expression)
+        /// <param name="expression">expression to check</param>
+        /// <returns>
+        /// returns 0 if integer
+        /// returns 1 if +
+        /// returns 2 if -
+        /// returns 3 if *
+        /// returns 4 if /
+        /// returns 5 if (
+        /// returns 6 if )
+        /// returns -1 if not match - could be a variable
+        /// </returns>
+        private static int CheckExpression(string expression)
         {
-            if (int.TryParse(expression, out _))
+            if (int.TryParse(expression, out _)) return 0; //if parsalbe 
+
+            return expression switch
             {
-                return 0;
-            }
-            else if (expression.Equals("+"))
-            {
-                return 1;
-            }
-            else if (expression.Equals("-"))
-            {
-                return 2;
-            }
-            else if (expression.Equals("*"))
-            {
-                return 3;
-            }
-            else if (expression.Equals("/"))
-            {
-                return 4;
-            }
-            else if (expression.Equals("("))
-            {
-                return 5;
-            }
-            else if (expression.Equals(")"))
-            {
-                return 6;
-            }
-            else
-            {
-                return -1;
-            }
+                "+" => 1,
+                "-" => 2,
+                "*" => 3,
+                "/" => 4,
+                "(" => 5,
+                ")" => 6,
+                _ => -1
+            };
         }
     }
 

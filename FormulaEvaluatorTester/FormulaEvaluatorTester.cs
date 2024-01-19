@@ -7,7 +7,7 @@ if (Evaluator.Evaluate("5+5", null) == 10)
     Console.WriteLine("Happy Day!");
 }
 
-Console.WriteLine(Evaluator.Evaluate("5*(5*2)", null));
+Console.WriteLine(Evaluator.Evaluate("5*(30 - 25)", null));
 
 int VariableEvaluator(string varName)
 {
