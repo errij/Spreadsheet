@@ -8,11 +8,16 @@ namespace FormulaEvaluator
         public delegate int Lookup(String var);
 
         /// <summary>
-        /// 
+        /// Calculates an expression and evaluate number
+        /// using operateors and values from string expression
         /// </summary>
-        /// <param name="expression"></param>
-        /// <param name="variableEvaluator"></param>
-        /// <returns></returns>
+        /// <param name="expression">
+        /// string of combination of values and operators
+        /// </param>
+        /// <param name="variableEvaluator"
+        /// >delegate to lookup the variables
+        /// </param>
+        /// <returns>evalutated integer</returns>
         /// <exception cref="Exception"></exception>
         public static int Evaluate(String expression, Lookup variableEvaluator)
         {
@@ -34,7 +39,7 @@ namespace FormulaEvaluator
 
                         if(!(current is int))
                         {
-                            throw new ArgumentException(x + " is not a variable!");
+                            throw new ArgumentException($"{x} is not a variable!");
                         }
                     }
                     else

@@ -28,12 +28,12 @@ int VariableEvaluator(string varName)
 }
 
 // Example expression containing variables
-string expression = "a + b * (3 - 2)";
+string expression = "a + (3 - 2)";
 
 try
 {
     // Call Evaluate with the expression and the variable evaluator
-    int result = Evaluator.Evaluate(expression, VariableEvaluator);
+    int result = Evaluator.Evaluate(expression, a => 1);
 
     Console.WriteLine($"Result: {result}");
 }
