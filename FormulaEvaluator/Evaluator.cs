@@ -17,6 +17,7 @@ namespace FormulaEvaluator
         /// <exception cref="Exception"></exception>
         public static int Evaluate(String expression, Lookup variableEvaluator)
         {
+            HashSet<String> variables = new HashSet<String>();
             expression = expression.Replace(" ", ""); //removes whitespaces
             String[] substrings = Regex.Split(expression, @"(?<=[\(\)\-\+\*/])|(?=[\(\)\-\+\*/])").Where(s => !string.IsNullOrEmpty(s)).ToArray(); //slipt string
 
@@ -31,11 +32,28 @@ namespace FormulaEvaluator
 
                     if (CheckExpression(x) == -1 && variableEvaluator != null) //if x is a variable and delegate is not null
                     {
-                        current = variableEvaluator(x); //find the variable
+                        Char[] check = x.ToCharArray();
+                        int count = 0;
 
-                        if (!(current is int)) //if not found
+                        foreach (Char character in check) //check the valicity of variable 
                         {
-                            throw new ArgumentException($"{x} is not a variable!"); //throw an exception
+                            if (!(int.TryParse(character.ToString(), out _)))
+                            {
+                                count++;
+                            }
+                            if (count == 2) //if variable contains more than one character
+                            {
+                                throw new ArgumentException($"Variable {x} is not valid!");
+                            }
+                        }
+
+                        try
+                        {
+                            current = variableEvaluator(x);
+                        }
+                        catch
+                        {
+                            throw new ArgumentException($"Variable {x} was not defined!");
                         }
                     }
                     else //if x is an integer
@@ -54,6 +72,11 @@ namespace FormulaEvaluator
                         }
                         else //if it's /
                         {
+                            if(current == 0)
+                            {
+                                throw new ArgumentException("divided by zero");
+                            }
+
                             ValStack.Push(temp / current); //division
                         }
                     }
@@ -78,8 +101,15 @@ namespace FormulaEvaluator
                             ValStack.Push(num2 - num1); //minus
                         }
                     }
+                    try
+                    {
+                        OperStack.Pop(); //when while loop is finished pop the operator //should be ( or throw exception
 
-                    OperStack.Pop(); //when while loop is finished pop the operator //should be ( or throw exception
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        throw new ArgumentException("OperStack is empty!");
+                    }
 
                     if (OperStack.Count > 0 && (CheckExpression(OperStack.Peek()) == 3 || CheckExpression(OperStack.Peek()) == 4)) //if there is * or / in front of (
                     {
@@ -93,6 +123,11 @@ namespace FormulaEvaluator
                         }
                         else //division
                         {
+                            if (num1 == 0)
+                            {
+                                throw new ArgumentException("divided by zero");
+                            }
+
                             ValStack.Push(num2 / num1);
                         }
                     }
@@ -123,31 +158,43 @@ namespace FormulaEvaluator
                     OperStack.Push(x);//push to the stack
                 }
             }
-
+            
                 while (OperStack.Count > 0) //deal with the remaining operators //should be + or - 
                 {
-                    int num1 = ValStack.Pop();
-                    int num2 = ValStack.Pop();
+                    try
+                    {
+                        int num1 = ValStack.Pop();
+                        int num2 = ValStack.Pop();
 
-                    if (CheckExpression(OperStack.Peek()) == 3 || CheckExpression(OperStack.Peek()) == 4) //if remaining operator is other than + or -
-                    {
-                        throw new Exception("There are more operators than numbers"); //throw exception
-                    }
+                        if (CheckExpression(OperStack.Peek()) == 3 || CheckExpression(OperStack.Peek()) == 4) //if remaining operator is other than + or -
+                        {
+                            throw new ArgumentException("There are more operators than numbers"); //throw exception
+                        }
 
-                    if (CheckExpression(OperStack.Pop()) == 1) //if +
-                    {
-                        ValStack.Push(num2 + num1);
+                        if (CheckExpression(OperStack.Pop()) == 1) //if +
+                        {
+                            ValStack.Push(num2 + num1);
+                        }
+                        else
+                        {
+                            ValStack.Push(num2 - num1);
+                        }
                     }
-                    else
+                    catch(InvalidOperationException)
                     {
-                        ValStack.Push(num2 - num1);
+                        throw new ArgumentException("ValStack is empty!");
                     }
                 }
 
 
             if (ValStack.Count > 1) //if there are more than one variable
             {
-                throw new Exception("There are more numbers than operators");//throw exception
+                throw new ArgumentException("There are more numbers than operators");//throw exception
+            }
+
+            if (ValStack.Count == 0)
+            {
+                throw new ArgumentException("Stack is empty");
             }
 
             return ValStack.Pop(); //return value

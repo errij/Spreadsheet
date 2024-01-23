@@ -18,6 +18,8 @@ int VariableEvaluator(string varName)
     }
 }
 
+Console.WriteLine(Evaluator.Evaluate("1 + x", s => 1));
+
 if (Evaluator.Evaluate("5+5", null) == 10)
 {
     Console.WriteLine("Test 1 pass");
