@@ -33,7 +33,7 @@ namespace FormulaEvaluator
                     {
                         current = variableEvaluator(x); //find the variable
 
-                        if(!(current is int)) //if not found
+                        if (!(current is int)) //if not found
                         {
                             throw new ArgumentException($"{x} is not a variable!"); //throw an exception
                         }
@@ -41,7 +41,7 @@ namespace FormulaEvaluator
                     else //if x is an integer
                     {
                         current = int.Parse(x); //parse
-                        
+
                     }
                     //if operator stack isn't empty and top operator is either * or /
                     if (OperStack.Count > 0 && (CheckExpression(OperStack.Peek()) == 3 || CheckExpression(OperStack.Peek()) == 4))
@@ -97,31 +97,53 @@ namespace FormulaEvaluator
                         }
                     }
                 }
-                else if (CheckExpression(x) > 0) //if x is an operator other than )
+                else if (CheckExpression(x) == 1 || CheckExpression(x) == 2) //if x is either + or -
+                {
+                    if(OperStack.Count != 0 && (CheckExpression(OperStack.Peek()) == 1 || CheckExpression(OperStack.Peek()) == 2)) //if top operator is + or -
+                    {
+                        if(ValStack.Count > 1)  //if there are more than one value in the stack
+                        {
+                            int num1 = ValStack.Pop();
+                            int num2 = ValStack.Pop();
+
+                            if(CheckExpression(OperStack.Pop()) == 1)
+                            {
+                                ValStack.Push(num2 + num1);
+                            }
+                            else
+                            {
+                                ValStack.Push(num2 - num1);
+                            }
+                        }
+                    }
+                    OperStack.Push(x);
+                }
+                else //if x is * or / 
                 {
                     OperStack.Push(x);//push to the stack
                 }
             }
 
-            while (OperStack.Count > 0) //deal with the remaining operators //should be + or - 
-            {
-                int num1 = ValStack.Pop();
-                int num2 = ValStack.Pop();
+                while (OperStack.Count > 0) //deal with the remaining operators //should be + or - 
+                {
+                    int num1 = ValStack.Pop();
+                    int num2 = ValStack.Pop();
 
-                if (CheckExpression(OperStack.Peek()) == 3 || CheckExpression(OperStack.Peek()) == 4) //if remaining operator is other than + or -
-                {
-                    throw new Exception("There are more operators than numbers"); //throw exception
+                    if (CheckExpression(OperStack.Peek()) == 3 || CheckExpression(OperStack.Peek()) == 4) //if remaining operator is other than + or -
+                    {
+                        throw new Exception("There are more operators than numbers"); //throw exception
+                    }
+
+                    if (CheckExpression(OperStack.Pop()) == 1) //if +
+                    {
+                        ValStack.Push(num2 + num1);
+                    }
+                    else
+                    {
+                        ValStack.Push(num2 - num1);
+                    }
                 }
 
-                if (CheckExpression(OperStack.Pop()) == 1) //if +
-                {
-                    ValStack.Push(num2 + num1);
-                }
-                else //if -
-                {
-                    ValStack.Push(num2 - num1);
-                }
-            }
 
             if (ValStack.Count > 1) //if there are more than one variable
             {
@@ -160,6 +182,7 @@ namespace FormulaEvaluator
                 _ => -1
             };
         }
+
     }
 
 }
