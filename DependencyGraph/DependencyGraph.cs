@@ -79,7 +79,7 @@ namespace SpreadsheetUtilities
         /// </summary>
         public int this[string s]
         {
-            get { return GetDependees(s).Count(); }
+            get { return GetDependents(s).Count(); }
         }
 
 
@@ -106,17 +106,11 @@ namespace SpreadsheetUtilities
         /// </summary>
         public IEnumerable<string> GetDependents(string s)
         {
-            List<String> result = new List<String>();
+            HashSet<string> result = new HashSet<string>();
 
-            if (!(dependees.Contains(s)))
+            if (graph.TryGetValue(s, out var dependeesHashSet))
             {
-                return null;
-            }
-
-            foreach (var pair in graph)
-            {
-                pair.Value.Contains(s);
-                result.Add(pair.Key);
+                result = dependeesHashSet;
             }
 
             return result;
@@ -127,12 +121,18 @@ namespace SpreadsheetUtilities
         /// </summary>
         public IEnumerable<string> GetDependees(string s)
         {
-            if (graph.TryGetValue(s, out var dependeesHashSet))
+            HashSet<string> result = new HashSet<string>();
+
+
+            foreach (var pair in graph)
             {
-                return dependeesHashSet;
+                if (pair.Value.Contains(s))
+                {
+                    result.Add(pair.Key);
+                }
             }
 
-            return null;
+            return result;
         }
 
 

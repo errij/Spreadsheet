@@ -1,5 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using FormulaEvaluator;
+using SpreadsheetUtilities;
 using System;
 using System.Linq.Expressions;
 int VariableEvaluator(string varName)
@@ -17,8 +18,6 @@ int VariableEvaluator(string varName)
         throw new ArgumentException($"Unknown variable: {varName}");
     }
 }
-
-Console.WriteLine(Evaluator.Evaluate("1 + x", s => 1));
 
 if (Evaluator.Evaluate("5+5", null) == 10)
 {
