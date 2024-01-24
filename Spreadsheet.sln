@@ -12,7 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "솔루션 항목", "솔루�
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PS1GradingTests", "TestProject1\PS1GradingTests.csproj", "{202482ED-B961-4F9B-9D39-E068BA8EF63E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DependencyGraph", "DependencyGraph\DependencyGraph.csproj", "{3AEF80ED-C214-403B-AB43-945B63E5FDCC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,10 +28,10 @@ Global
 		{487C93A6-DECB-4B22-8BF9-5D9C551C9D0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{487C93A6-DECB-4B22-8BF9-5D9C551C9D0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{487C93A6-DECB-4B22-8BF9-5D9C551C9D0A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{202482ED-B961-4F9B-9D39-E068BA8EF63E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{202482ED-B961-4F9B-9D39-E068BA8EF63E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{202482ED-B961-4F9B-9D39-E068BA8EF63E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{202482ED-B961-4F9B-9D39-E068BA8EF63E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3AEF80ED-C214-403B-AB43-945B63E5FDCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3AEF80ED-C214-403B-AB43-945B63E5FDCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3AEF80ED-C214-403B-AB43-945B63E5FDCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3AEF80ED-C214-403B-AB43-945B63E5FDCC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
