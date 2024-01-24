@@ -40,14 +40,16 @@ namespace SpreadsheetUtilities
     /// </summary>
     public class DependencyGraph
     {
-        private Dictionary<String, String> graph;
+        private Dictionary<string, HashSet<string>> graph;
+        private HashSet<string> dependees;
 
         /// <summary>
         /// Creates an empty DependencyGraph.
         /// </summary>
         public DependencyGraph()
         {
-            graph = new Dictionary<string, string>();
+            graph = new Dictionary<string, HashSet<string>>();
+            dependees = new HashSet<string>();
         }
 
         /// <summary>
@@ -55,7 +57,16 @@ namespace SpreadsheetUtilities
         /// </summary>
         public int Size
         {
-            get { return graph.Count; }
+            get
+            {
+                int result = 0;
+                foreach (string key in graph.Keys)
+                {
+                    result += this[key];
+                }
+
+                return result;
+            }
         }
 
 
@@ -68,7 +79,7 @@ namespace SpreadsheetUtilities
         /// </summary>
         public int this[string s]
         {
-            get { return 0; }
+            get { return GetDependees(s).Count(); }
         }
 
 
@@ -86,7 +97,7 @@ namespace SpreadsheetUtilities
         /// </summary>
         public bool HasDependees(string s)
         {
-            return graph.ContainsValue(s);
+            return dependees.Contains(s);
         }
 
 
@@ -95,8 +106,20 @@ namespace SpreadsheetUtilities
         /// </summary>
         public IEnumerable<string> GetDependents(string s)
         {
+            List<String> result = new List<String>();
 
-            return null;
+            if (!(dependees.Contains(s)))
+            {
+                return null;
+            }
+
+            foreach (var pair in graph)
+            {
+                pair.Value.Contains(s);
+                result.Add(pair.Key);
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -104,6 +127,11 @@ namespace SpreadsheetUtilities
         /// </summary>
         public IEnumerable<string> GetDependees(string s)
         {
+            if (graph.TryGetValue(s, out var dependeesHashSet))
+            {
+                return dependeesHashSet;
+            }
+
             return null;
         }
 
@@ -120,7 +148,16 @@ namespace SpreadsheetUtilities
         /// <param name="t"> t cannot be evaluated until s is</param>        /// 
         public void AddDependency(string s, string t)
         {
-            graph.Add(s, t);
+            if (!graph.ContainsKey(s))
+            {
+                graph.Add(s, new HashSet<string> { t });
+            }
+            else
+            {
+                graph[s].Add(t);
+            }
+
+            dependees.Add(t);
         }
 
 
@@ -131,7 +168,17 @@ namespace SpreadsheetUtilities
         /// <param name="t"></param>
         public void RemoveDependency(string s, string t)
         {
-            graph.Remove(s, out t);
+            if (graph.TryGetValue(s, out var dependeesHashSet))
+            {
+                dependeesHashSet.Remove(t);
+
+                if (graph[s].Count == 0)
+                {
+                    graph.Remove(s);
+                }
+            }
+
+            dependees.Remove(t);
         }
 
 
@@ -141,6 +188,16 @@ namespace SpreadsheetUtilities
         /// </summary>
         public void ReplaceDependents(string s, IEnumerable<string> newDependents)
         {
+            if (graph.ContainsKey(s))
+            {
+                graph.Remove(s);
+            }
+
+            foreach (string st in newDependents)
+            {
+                AddDependency(s, st);
+                dependees.Add(st);
+            }
         }
 
 
@@ -150,6 +207,21 @@ namespace SpreadsheetUtilities
         /// </summary>
         public void ReplaceDependees(string s, IEnumerable<string> newDependees)
         {
+            if (dependees.Contains(s))
+            {
+                foreach (var pair in graph)
+                {
+                    pair.Value.Contains(s);
+
+                    RemoveDependency(pair.Key, s);
+                }
+            }
+
+            foreach (string st in newDependees)
+            {
+                AddDependency(st, s);
+                dependees.Add(s);
+            }
         }
 
     }
