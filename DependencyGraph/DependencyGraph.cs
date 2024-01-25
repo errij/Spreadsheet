@@ -88,7 +88,7 @@ namespace SpreadsheetUtilities
         /// </summary>
         public bool HasDependents(string s)
         {
-            return graph.ContainsKey(s);
+            return dependees.Contains(s);
         }
 
 
@@ -97,7 +97,7 @@ namespace SpreadsheetUtilities
         /// </summary>
         public bool HasDependees(string s)
         {
-            return dependees.Contains(s);
+            return graph.ContainsKey(s);
         }
 
 

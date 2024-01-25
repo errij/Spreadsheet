@@ -15,6 +15,7 @@ namespace DevelopmentTests
         ///Empty graph should contain nothing
         ///</summary>
         [TestMethod()]
+        [TestCategory("1")]
         public void SimpleEmptyTest()
         {
             DependencyGraph t = new DependencyGraph();
@@ -24,6 +25,7 @@ namespace DevelopmentTests
         ///Empty graph should contain nothing
         ///</summary>
         [TestMethod()]
+        [TestCategory("2")]
         public void SimpleEmptyRemoveTest()
         {
             DependencyGraph t = new DependencyGraph();
@@ -36,6 +38,7 @@ namespace DevelopmentTests
         ///Empty graph should contain nothing
         ///</summary>
         [TestMethod()]
+        [TestCategory("3")]
         public void EmptyEnumeratorTest()
         {
             DependencyGraph t = new DependencyGraph();
@@ -54,6 +57,7 @@ namespace DevelopmentTests
         ///Replace on an empty DG shouldn't fail
         ///</summary>
         [TestMethod()]
+        [TestCategory("4")]
         public void SimpleReplaceTest()
         {
             DependencyGraph t = new DependencyGraph();
@@ -67,6 +71,7 @@ namespace DevelopmentTests
         ///It should be possibe to have more than one DG at a time.
         ///</summary>
         [TestMethod()]
+        [TestCategory("5")]
         public void StaticTest()
         {
             DependencyGraph t1 = new DependencyGraph();
@@ -79,6 +84,7 @@ namespace DevelopmentTests
         ///Non-empty graph contains something
         ///</summary>
         [TestMethod()]
+        [TestCategory("6")]
         public void SizeTest()
         {
             DependencyGraph t = new DependencyGraph();
@@ -92,6 +98,7 @@ namespace DevelopmentTests
         ///Non-empty graph contains something
         ///</summary>
         [TestMethod()]
+        [TestCategory("7")]
         public void EnumeratorTest()
         {
             DependencyGraph t = new DependencyGraph();
@@ -121,6 +128,7 @@ namespace DevelopmentTests
         ///Non-empty graph contains something
         ///</summary>
         [TestMethod()]
+        [TestCategory("8")]
         public void ReplaceThenEnumerate()
         {
             DependencyGraph t = new DependencyGraph();
@@ -154,6 +162,7 @@ namespace DevelopmentTests
         ///Using lots of data
         ///</summary>
         [TestMethod()]
+        [TestCategory("9")]
         public void StressTest()
         {
             // Dependency graph
@@ -222,5 +231,33 @@ namespace DevelopmentTests
                 HashSet<string>(t.GetDependees(letters[i]))));
             }
         }
+
+        [TestMethod()]
+        [TestCategory("10")]
+        public void HasDepenTest()
+        {
+            DependencyGraph t1 = new DependencyGraph();
+            DependencyGraph t2 = new DependencyGraph();
+
+            t1.AddDependency("a", "b");
+
+            Assert.IsTrue(t1.HasDependents("b"));
+            Assert.IsFalse(t1.HasDependents("a"));
+            Assert.IsTrue(t1.HasDependees("a"));
+            Assert.IsFalse(t1.HasDependees("b"));
+
+            Assert.IsFalse(t2.HasDependents("a"));
+            Assert.IsFalse(t2.HasDependents("b"));
+            Assert.IsFalse(t2.HasDependees("a"));
+            Assert.IsFalse(t2.HasDependees("b"));
+            
+            t1.ReplaceDependents("a", new HashSet<string> { "b", "c", "d" });
+            Assert.IsTrue(t1.HasDependents("b"));
+            Assert.IsTrue(t1.HasDependents("c"));
+            Assert.IsTrue(t1.HasDependents("d"));
+            Assert.IsFalse(t1.HasDependents("a"));
+            Assert.IsTrue(t1.HasDependees("a"));
+        }
+
     }
 }
