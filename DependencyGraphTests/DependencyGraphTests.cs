@@ -9,7 +9,7 @@ namespace DevelopmentTests
     ///to contain all DependencyGraphTest Unit Tests
     ///</summary>
     [TestClass()]
-    public class DependencyGraphTest
+    public class DependencyGraphTests
     {
         /// <summary>
         ///Empty graph should contain nothing

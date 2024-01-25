@@ -24,5 +24,5 @@ Future extensions includes similare functions in the google spreadsheet program.
 
 # Time
 
-	1. Assignment 01:	Predicted:	10h	||	Actual:	10h
-	2. Assignment 02:	Predicted:	10h	||	Actual:	08h
+	1. Assignment 01:	Predicted:	10h	||	Actual:	10h		# Almost perfectly fit to the expected time. However, I failed few tests and fixed after due date
+	2. Assignment 02:	Predicted:	10h	||	Actual:	09h		# Finished about hour earlier. However not far away from the expected time. 
