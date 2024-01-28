@@ -190,6 +190,11 @@ namespace SpreadsheetUtilities
         {
             if (graph.ContainsKey(s))
             {
+                foreach (string item in graph[s])
+                {
+                    dependees.Remove(item);
+                }
+
                 graph.Remove(s);
             }
 
