@@ -93,6 +93,9 @@ namespace SpreadsheetUtilities
             {
                 if (CheckExpression(item) == -1)
                 {
+                    char[] check = item.ToCharArray();
+              
+                    if (int.TryParse(check[0].ToString(), out _)) throw new FormulaFormatException($"not a valid item: {item}");
                     if (!isValid(item)) throw new FormulaFormatException($"not a valid item: {item}");
 
                     try
@@ -276,7 +279,17 @@ namespace SpreadsheetUtilities
         /// </summary>
         public IEnumerable<String> GetVariables()
         {
-            return null;
+            List<string> temp = new List<string> ();
+
+            foreach(var item in formulaContainer)
+            {
+                if (CheckExpression(item) == -1)
+                {
+                    temp.Add(item);
+                }
+            }
+
+            return temp;
         }
 
         /// <summary>
@@ -291,7 +304,7 @@ namespace SpreadsheetUtilities
         /// </summary>
         public override string ToString()
         {
-            return null;
+            return formulaContainer.ToString();
         }
 
         /// <summary>
@@ -318,7 +331,7 @@ namespace SpreadsheetUtilities
         /// </summary>
         public override bool Equals(object? obj)
         {
-            return false;
+            return this.GetHashCode() == obj.GetHashCode();
         }
 
         /// <summary>
@@ -328,7 +341,7 @@ namespace SpreadsheetUtilities
         /// </summary>
         public static bool operator ==(Formula f1, Formula f2)
         {
-            return false;
+            return f1.Equals(f2);
         }
 
         /// <summary>
@@ -338,7 +351,7 @@ namespace SpreadsheetUtilities
         /// </summary>
         public static bool operator !=(Formula f1, Formula f2)
         {
-            return false;
+            return !f1.Equals(f2);
         }
 
         /// <summary>
@@ -348,7 +361,7 @@ namespace SpreadsheetUtilities
         /// </summary>
         public override int GetHashCode()
         {
-            return 0;
+            return this.ToString().GetHashCode();
         }
 
         /// <summary>
