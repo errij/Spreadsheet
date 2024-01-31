@@ -62,7 +62,7 @@ namespace SpreadsheetUtilities
                 int result = 0;
                 foreach (string key in graph.Keys)
                 {
-                    result += this[key];
+                    result += GetDependents(key).Count();
                 }
 
                 return result;
@@ -79,7 +79,7 @@ namespace SpreadsheetUtilities
         /// </summary>
         public int this[string s]
         {
-            get { return GetDependents(s).Count(); }
+            get { return GetDependees(s).Count(); }
         }
 
 
@@ -89,7 +89,6 @@ namespace SpreadsheetUtilities
         public bool HasDependents(string s)
         {
             return graph.ContainsKey(s);
-
         }
 
 
@@ -109,9 +108,9 @@ namespace SpreadsheetUtilities
         {
             HashSet<string> result = new HashSet<string>();
 
-            if (graph.TryGetValue(s, out var dependeesHashSet))
+            if (graph.TryGetValue(s, out var dependeesList))
             {
-                result = dependeesHashSet;
+                result = dependeesList;
             }
 
             return result;
@@ -122,7 +121,7 @@ namespace SpreadsheetUtilities
         /// </summary>
         public IEnumerable<string> GetDependees(string s)
         {
-            HashSet<string> result = new HashSet<string>();
+            List<string> result = new List<string>();
 
 
             foreach (var pair in graph)
@@ -177,9 +176,13 @@ namespace SpreadsheetUtilities
                 {
                     graph.Remove(s);
                 }
-            }
 
-            dependees.Remove(t);
+                IEnumerable<string> checkList = GetDependees(t);
+                if (checkList.Count() == 0)
+                {
+                    dependees.Remove(t);
+                }
+            }
         }
 
 
@@ -193,10 +196,8 @@ namespace SpreadsheetUtilities
             {
                 foreach (string item in graph[s])
                 {
-                    dependees.Remove(item);
+                    RemoveDependency(s, item);
                 }
-
-                graph.Remove(s);
             }
 
             foreach (string st in newDependents)
