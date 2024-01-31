@@ -17,7 +17,6 @@ namespace FormulaEvaluator
         /// <exception cref="Exception"></exception>
         public static int Evaluate(String expression, Lookup variableEvaluator)
         {
-            HashSet<String> variables = new HashSet<String>();
             expression = expression.Replace(" ", ""); //removes whitespaces
             String[] substrings = Regex.Split(expression, @"(?<=[\(\)\-\+\*/])|(?=[\(\)\-\+\*/])").Where(s => !string.IsNullOrEmpty(s)).ToArray(); //slipt string
 
