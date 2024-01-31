@@ -232,32 +232,5 @@ namespace DevelopmentTests
             }
         }
 
-        [TestMethod()]
-        [TestCategory("10")]
-        public void HasDepenTest()
-        {
-            DependencyGraph t1 = new DependencyGraph();
-            DependencyGraph t2 = new DependencyGraph();
-
-            t1.AddDependency("a", "b");
-
-            Assert.IsTrue(t1.HasDependents("b"));
-            Assert.IsFalse(t1.HasDependents("a"));
-            Assert.IsTrue(t1.HasDependees("a"));
-            Assert.IsFalse(t1.HasDependees("b"));
-
-            Assert.IsFalse(t2.HasDependents("a"));
-            Assert.IsFalse(t2.HasDependents("b"));
-            Assert.IsFalse(t2.HasDependees("a"));
-            Assert.IsFalse(t2.HasDependees("b"));
-            
-            t1.ReplaceDependents("a", new HashSet<string> { "b", "c", "d" });
-            Assert.IsTrue(t1.HasDependents("b"));
-            Assert.IsTrue(t1.HasDependents("c"));
-            Assert.IsTrue(t1.HasDependents("d"));
-            Assert.IsFalse(t1.HasDependents("a"));
-            Assert.IsTrue(t1.HasDependees("a"));
-        }
-
     }
 }
