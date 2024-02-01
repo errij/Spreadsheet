@@ -61,45 +61,27 @@ namespace FormulaEvaluator
 
                     }
                     //if operator stack isn't empty and top operator is either * or /
-                    if (OperStack.Count > 0 && (CheckExpression(OperStack.Peek()) == 3 || CheckExpression(OperStack.Peek()) == 4))
+                    if (OperStack.Count > 0 && (CheckExpression(OperStack.Peek()) == 2))
                     {
                         int temp = ValStack.Pop(); //pop the value in the stack
 
-                        if (CheckExpression(OperStack.Pop()) == 3) //pop the operator and if it's *
-                        {
-                            ValStack.Push(temp * current); //multiply
-                        }
-                        else //if it's /
-                        {
-                            if(current == 0)
-                            {
-                                throw new ArgumentException("divided by zero");
-                            }
-
-                            ValStack.Push(temp / current); //division
-                        }
+                        ValStack.Push(DoMath(temp, current, OperStack.Pop()));
                     }
                     else //if x is either + or -
                     {
                         ValStack.Push(current);
                     }
                 }
-                else if (CheckExpression(x) == 6) //if x is )
+                else if (CheckExpression(x) == 4) //if x is )
                 {
-                    while (OperStack.Count > 0 && CheckExpression(OperStack.Peek()) != 5) //while operator stack isn't empty and top operator isn't (
+                    while (OperStack.Count > 0 && CheckExpression(OperStack.Peek()) != 3) //while operator stack isn't empty and top operator isn't (
                     {
                         int num1 = ValStack.Pop(); //pop the top value
                         int num2 = ValStack.Pop(); //pop the second value
 
-                        if (CheckExpression(OperStack.Pop()) == 1) //pop the operator and if top operator is +
-                        {
-                            ValStack.Push(num2 + num1); //plus
-                        }
-                        else //if top operator is -
-                        {
-                            ValStack.Push(num2 - num1); //minus
-                        }
+                        ValStack.Push(DoMath(num2, num1, OperStack.Pop()));
                     }
+
                     try
                     {
                         OperStack.Pop(); //when while loop is finished pop the operator //should be ( or throw exception
@@ -110,44 +92,25 @@ namespace FormulaEvaluator
                         throw new ArgumentException("OperStack is empty!");
                     }
 
-                    if (OperStack.Count > 0 && (CheckExpression(OperStack.Peek()) == 3 || CheckExpression(OperStack.Peek()) == 4)) //if there is * or / in front of (
+                    if (OperStack.Count > 0 && (CheckExpression(OperStack.Peek()) == 2)) //if there is * or / in front of (
                     {
                         //do the process
                         int num1 = ValStack.Pop();
                         int num2 = ValStack.Pop();
 
-                        if (CheckExpression(OperStack.Pop()) == 3) //multiply
-                        {
-                            ValStack.Push(num2 * num1);
-                        }
-                        else //division
-                        {
-                            if (num1 == 0)
-                            {
-                                throw new ArgumentException("divided by zero");
-                            }
-
-                            ValStack.Push(num2 / num1);
-                        }
+                        ValStack.Push(DoMath(num2, num1, OperStack.Pop()));
                     }
                 }
-                else if (CheckExpression(x) == 1 || CheckExpression(x) == 2) //if x is either + or -
+                else if (CheckExpression(x) == 1) //if x is either + or -
                 {
-                    if(OperStack.Count != 0 && (CheckExpression(OperStack.Peek()) == 1 || CheckExpression(OperStack.Peek()) == 2)) //if top operator is + or -
+                    if(OperStack.Count != 0 && (CheckExpression(OperStack.Peek()) == 1)) //if top operator is + or -
                     {
                         if(ValStack.Count > 1)  //if there are more than one value in the stack
                         {
                             int num1 = ValStack.Pop();
                             int num2 = ValStack.Pop();
 
-                            if(CheckExpression(OperStack.Pop()) == 1)
-                            {
-                                ValStack.Push(num2 + num1);
-                            }
-                            else
-                            {
-                                ValStack.Push(num2 - num1);
-                            }
+                            ValStack.Push(DoMath(num2, num1, OperStack.Pop()));
                         }
                     }
                     OperStack.Push(x);
@@ -165,19 +128,13 @@ namespace FormulaEvaluator
                         int num1 = ValStack.Pop();
                         int num2 = ValStack.Pop();
 
-                        if (CheckExpression(OperStack.Peek()) == 3 || CheckExpression(OperStack.Peek()) == 4) //if remaining operator is other than + or -
+                        if (CheckExpression(OperStack.Peek()) == 2) //if remaining operator is other than + or -
                         {
                             throw new ArgumentException("There are more operators than numbers"); //throw exception
                         }
 
-                        if (CheckExpression(OperStack.Pop()) == 1) //if +
-                        {
-                            ValStack.Push(num2 + num1);
-                        }
-                        else
-                        {
-                            ValStack.Push(num2 - num1);
-                        }
+                    ValStack.Push(DoMath(num2, num1, OperStack.Pop()));
+                        
                     }
                     catch(InvalidOperationException)
                     {
@@ -200,35 +157,62 @@ namespace FormulaEvaluator
         }
 
         /// <summary>
-        /// simply check expression type
+        /// Check expression type
         /// </summary>
         /// <param name="expression">expression to check</param>
         /// <returns>
-        /// returns 0 if integer
-        /// returns 1 if +
-        /// returns 2 if -
-        /// returns 3 if *
-        /// returns 4 if /
-        /// returns 5 if (
-        /// returns 6 if )
-        /// returns -1 if not match - could be a variable
+        /// 1 if an expression is either + or -
+        /// 2 if an expression is either * or /
+        /// 3 if an expression is (
+        /// 4 if an expression is )
         /// </returns>
         private static int CheckExpression(string expression)
         {
-            if (int.TryParse(expression, out _)) return 0; //if parsalbe 
+            if (double.TryParse(expression, out _)) return 0; //if double
 
             return expression switch
             {
-                "+" => 1,
-                "-" => 2,
-                "*" => 3,
-                "/" => 4,
-                "(" => 5,
-                ")" => 6,
+                "+" or "-" => 1,
+                "*" or "/" => 2,
+                "(" => 3,
+                ")" => 4,
                 _ => -1
             };
         }
 
+        /// <summary>
+        /// This method does hard math for us! 
+        /// This method is better than us right?
+        /// </summary>
+        /// <param name="x">the first value</param>
+        /// <param name="y">the second value</param>
+        /// <param name="expression">expression</param>
+        /// <returns>Evaluated value</returns>
+        /// <exception cref="ArgumentException">If no-no value catched (like divided by zero)</exception>
+        private static int DoMath(int x, int y, string expression)
+        {
+            if (expression.Equals("+"))
+            {
+                return x + y;
+            }
+            else if (expression.Equals("-"))
+            {
+                return x-y;
+            }
+            else if (expression.Equals("*"))
+            {
+                return x*y;
+            }
+            else if (expression.Equals("/"))
+            {
+                if (y == 0) throw new ArgumentException("Divided by zero is no-no");
+                return x/y;
+            }
+            else
+            {
+                throw new ArgumentException($"{expression} is a no-no expression!");
+            }
+        }
     }
 
 }
