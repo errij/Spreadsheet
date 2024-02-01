@@ -89,22 +89,21 @@ namespace SpreadsheetUtilities
         {
             formulaContainer = new List<string>();  
             IEnumerable<string> temp = GetTokens(formula);
+            string check = ""; //temporary string 
 
             foreach (var item in temp)
             {
                 if (CheckExpression(item) == -1)
                 {
-                    char[] check = item.ToCharArray();
-                    
-                    if (int.TryParse(check[0].ToString(), out _)) throw new FormulaFormatException($"not a valid item: {item}");
-                    if (!isValid(item)) throw new FormulaFormatException($"not a valid item: {item}");
+                    if(int.TryParse(check, out _)) throw new FormulaFormatException($"not a valid item: {item}"); //checks invalid var name
+                    if (!isValid(item)) throw new FormulaFormatException($"not a valid item: {item}"); //isValid delegate
 
                     try
                     {
                         string normalString = normalize(item);
                         formulaContainer.Add(normalString);
                     }
-                    catch
+                    catch //catch an error thrown by normalize delegate
                     {
                         throw new FormulaFormatException($"not a item to normalize: {item}");
                     }
@@ -113,6 +112,8 @@ namespace SpreadsheetUtilities
                 {
                     formulaContainer.Add(item);
                 }
+
+                check = item;
             }
         }
 
@@ -309,7 +310,7 @@ namespace SpreadsheetUtilities
         /// </summary>
         public override string ToString()
         {
-            List<String> temp = new List<string>();
+            List<string> temp = new List<string>();
 
             foreach(var item in formulaContainer)
             {
@@ -322,7 +323,7 @@ namespace SpreadsheetUtilities
                     temp.Add(item);
                 }
             }
-            return temp.ToString();
+            return string.Join("", temp);
         }
 
         /// <summary>
@@ -469,23 +470,6 @@ namespace SpreadsheetUtilities
             {
                 throw new ArgumentException($"{expression} is a no-no expression!");
             }
-        }
-
-        private static bool CheckValidity(string st) 
-        {
-            st = st.Trim();
-            string[] temp = Regex.Split(st, @"(?<=[\(\)\-\+\*/])|(?=[\(\)\-\+\*/])").Where(s => !string.IsNullOrEmpty(s)).ToArray();
-
-            foreach(string s in temp)
-            {
-                if(CheckExpression(s) == -1)
-                {
-                    Char[] check = s.ToCharArray();
-
-                    if (int.TryParse(check[0].ToString(), out _)) return false;
-                }
-            }
-            return true;
         }
     }
 

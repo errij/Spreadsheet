@@ -56,6 +56,8 @@ namespace FormulaTests
             Formula simple3 = new Formula("X+2");
             Assert.AreEqual(6.0, simple3.Evaluate(look));
             Assert.AreNotEqual(simple3.Evaluate(look), simple2.Evaluate(look));
+            Formula simple4 = new Formula("Y + y");
+            Assert.AreEqual(0.0, simple4.Evaluate(look));  
         }
 
         [TestMethod]
@@ -65,6 +67,8 @@ namespace FormulaTests
             Formula f2 = new Formula("X+2", normal, s => true);
             Assert.IsTrue(f.Equals(f2));
             Assert.AreEqual(6.0, f.Evaluate(look));
+            Formula f3 = new Formula("Y + y", normal, s => true);
+            Assert.AreEqual(10.0, f3.Evaluate(look));
         }
 
         [TestMethod]
@@ -144,9 +148,37 @@ namespace FormulaTests
         [TestMethod]
         public void getVarTest()
         {
-            Formula f = new Formula("x++", normal, s => true); //should return x
-            List<string> test1 = new List<string> { "x" };
-            Assert.IsTrue(test1.ToString().Equals(f.ToString())); 
+            Formula f = new Formula("x++", s => s, s => true); //should return x
+            IEnumerator<string> e = f.GetVariables().GetEnumerator();
+            e.MoveNext();
+            Assert.AreEqual("x", e.Current);
+            Assert.IsFalse(e.MoveNext());
+            Formula f1 = new Formula("x++", normal, s => true); //should return X
+            IEnumerator<string> e1 = f1.GetVariables().GetEnumerator();
+            e1.MoveNext();
+            Assert.AreEqual("X", e1.Current);
+            Formula f2 = new Formula("x+y+z+d", s => s, s => true);
+            IEnumerator<string> e2 = f2.GetVariables().GetEnumerator();
+            e2.MoveNext();
+            Assert.AreEqual("x", e2.Current);
+            e2.MoveNext();
+            Assert.AreEqual("y", e2.Current);
+            e2.MoveNext();
+            Assert.AreEqual("z", e2.Current);
+            e2.MoveNext();
+            Assert.AreEqual("d", e2.Current);
+            Assert.IsFalse(e2.MoveNext());  
+            Formula f3 = new Formula("x+x+x+x", s => s, s => true);
+            IEnumerator<string> e3 = f3.GetVariables().GetEnumerator();
+            e3.MoveNext();
+            Assert.AreEqual("x", e3.Current);
+            e3.MoveNext();
+            Assert.AreEqual("x", e3.Current);
+            e3.MoveNext();
+            Assert.AreEqual("x", e3.Current);
+            e3.MoveNext();
+            Assert.AreEqual("x", e3.Current);
+            Assert.IsFalse(e3.MoveNext());
         }
     }
 }
