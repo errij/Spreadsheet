@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -94,20 +95,24 @@ namespace SpreadsheetUtilities
                 if (CheckExpression(item) == -1)
                 {
                     char[] check = item.ToCharArray();
-              
+                    
                     if (int.TryParse(check[0].ToString(), out _)) throw new FormulaFormatException($"not a valid item: {item}");
                     if (!isValid(item)) throw new FormulaFormatException($"not a valid item: {item}");
 
                     try
                     {
                         string normalString = normalize(item);
+                        formulaContainer.Add(normalString);
                     }
                     catch
                     {
                         throw new FormulaFormatException($"not a item to normalize: {item}");
                     }
                 }
-                formulaContainer.Add(item);
+                else
+                {
+                    formulaContainer.Add(item);
+                }
             }
         }
 
@@ -304,7 +309,20 @@ namespace SpreadsheetUtilities
         /// </summary>
         public override string ToString()
         {
-            return formulaContainer.ToString();
+            List<String> temp = new List<string>();
+
+            foreach(var item in formulaContainer)
+            {
+                if(CheckExpression(item) == 0)
+                {
+                    temp.Add(double.Parse(item).ToString());
+                }
+                else
+                {
+                    temp.Add(item);
+                }
+            }
+            return temp.ToString();
         }
 
         /// <summary>
@@ -451,6 +469,23 @@ namespace SpreadsheetUtilities
             {
                 throw new ArgumentException($"{expression} is a no-no expression!");
             }
+        }
+
+        private static bool CheckValidity(string st) 
+        {
+            st = st.Trim();
+            string[] temp = Regex.Split(st, @"(?<=[\(\)\-\+\*/])|(?=[\(\)\-\+\*/])").Where(s => !string.IsNullOrEmpty(s)).ToArray();
+
+            foreach(string s in temp)
+            {
+                if(CheckExpression(s) == -1)
+                {
+                    Char[] check = s.ToCharArray();
+
+                    if (int.TryParse(check[0].ToString(), out _)) return false;
+                }
+            }
+            return true;
         }
     }
 
