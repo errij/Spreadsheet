@@ -108,12 +108,12 @@ namespace SpreadsheetUtilities
                         throw new FormulaFormatException($"not a item to normalize: {item}");
                     }
                 }
-                else
+                else //not a variable
                 {
                     formulaContainer.Add(item);
                 }
 
-                check = item;
+                check = item;//to check a variable is valid
             }
         }
 
@@ -252,7 +252,7 @@ namespace SpreadsheetUtilities
 
                     ValStack.Push(DoMath(front, back, OperStack.Pop()));
                 }
-                catch (InvalidOperationException)
+                catch
                 {
                     return new FormulaError("ValStack is empty! Check formula is valid!");
                 }
@@ -316,13 +316,14 @@ namespace SpreadsheetUtilities
             {
                 if(CheckExpression(item) == 0)
                 {
-                    temp.Add(double.Parse(item).ToString());
+                    temp.Add(double.Parse(item).ToString()); //treats notation such as e
                 }
                 else
                 {
                     temp.Add(item);
                 }
             }
+
             return string.Join("", temp);
         }
 

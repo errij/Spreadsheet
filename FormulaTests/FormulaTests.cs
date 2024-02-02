@@ -71,6 +71,21 @@ namespace FormulaTests
             Assert.AreEqual(10.0, f3.Evaluate(look));
         }
 
+        [TestMethod] public void NormalizedConstructor2()
+        {
+            Formula f = new Formula("x", normal, s => true);
+            Formula f2 = new Formula("    ", normal, s => true);
+            Assert.AreEqual("X", f.ToString());
+            Assert.AreEqual("", f2.ToString());
+        }
+
+        [TestMethod]
+        public void notationTest()
+        {
+            Formula f = new Formula("5e2 + 200");
+            Assert.AreEqual(700.0, f.Evaluate(look));
+        }
+
         [TestMethod]
         [ExpectedException(typeof(FormulaFormatException))]
         public void InvalidVar() 
@@ -143,12 +158,14 @@ namespace FormulaTests
             Assert.IsTrue(f7.Evaluate(s => 1) is FormulaError);
             Formula f8 = new Formula(" ", normal, s => true);
             Assert.IsTrue(f8.Evaluate(s => 1) is FormulaError);
+            Formula f9 = new Formula("      ", normal, s => true);
+            Assert.IsTrue(f9.Evaluate(s => 1) is FormulaError);
         }
 
         [TestMethod]
         public void getVarTest()
         {
-            Formula f = new Formula("x++", s => s, s => true); //should return x
+            Formula f = new Formula("x++"); //should return x
             IEnumerator<string> e = f.GetVariables().GetEnumerator();
             e.MoveNext();
             Assert.AreEqual("x", e.Current);
@@ -157,7 +174,7 @@ namespace FormulaTests
             IEnumerator<string> e1 = f1.GetVariables().GetEnumerator();
             e1.MoveNext();
             Assert.AreEqual("X", e1.Current);
-            Formula f2 = new Formula("x+y+z+d", s => s, s => true);
+            Formula f2 = new Formula("x+y+z+d");
             IEnumerator<string> e2 = f2.GetVariables().GetEnumerator();
             e2.MoveNext();
             Assert.AreEqual("x", e2.Current);
@@ -167,8 +184,19 @@ namespace FormulaTests
             Assert.AreEqual("z", e2.Current);
             e2.MoveNext();
             Assert.AreEqual("d", e2.Current);
-            Assert.IsFalse(e2.MoveNext());  
-            Formula f3 = new Formula("x+x+x+x", s => s, s => true);
+            Assert.IsFalse(e2.MoveNext());
+            Formula f2a = new Formula("x+y+z+d", normal, s => true);
+            IEnumerator<string> e2a = f2a.GetVariables().GetEnumerator();
+            e2a.MoveNext();
+            Assert.AreEqual("X", e2a.Current);
+            e2a.MoveNext();
+            Assert.AreEqual("Y", e2a.Current);
+            e2a.MoveNext();
+            Assert.AreEqual("Z", e2a.Current);
+            e2a.MoveNext();
+            Assert.AreEqual("D", e2a.Current);
+            Assert.IsFalse(e2a.MoveNext());
+            Formula f3 = new Formula("x+x+x+x");
             IEnumerator<string> e3 = f3.GetVariables().GetEnumerator();
             e3.MoveNext();
             Assert.AreEqual("x", e3.Current);
@@ -179,6 +207,57 @@ namespace FormulaTests
             e3.MoveNext();
             Assert.AreEqual("x", e3.Current);
             Assert.IsFalse(e3.MoveNext());
+            Formula f4 = new Formula("4e1 + x + y");
+            IEnumerator<string> e4 = f4.GetVariables().GetEnumerator();
+            e4.MoveNext();
+            Assert.AreNotEqual("e", e4.Current);
+            Assert.AreEqual("x", e4.Current);
+            e4.MoveNext();
+            Assert.AreEqual("y", e4.Current);
+        }
+
+        [TestMethod]
+        public void equalTest()
+        {
+            Formula f = new Formula("x + 2");
+            Formula f2 = new Formula("x + 2", normal, s => true);
+            Assert.IsFalse (f2.Equals(f));
+            Formula f3 = new Formula("x + 2", normal, s => true);
+            Assert.IsTrue(f3.Equals(f2));
+            Assert.IsTrue(f2 == f3);
+            Assert.IsTrue(f2.GetHashCode() == f3.GetHashCode());
+            Assert.IsFalse(f == f2);
+            Assert.IsFalse(f.GetHashCode() == f2.GetHashCode());
+            Assert.IsFalse(f2 != f3);
+            Assert.IsTrue(f != f2);
+            Formula f4 = new Formula("x1+y2", normal, s=> true);
+            Formula f5 = new Formula("X1 + Y2");
+            Assert.IsTrue (f4.Equals(f5));
+            Formula f6 = new Formula("5e2 + 1e1", normal, s => true);
+            Formula f7 = new Formula("500 + 10");
+            Assert.IsTrue(f6.Equals(f7));
+            Formula f8 = new Formula("5.0000");
+            Formula f9 = new Formula("5");
+            Assert.IsTrue (f8.Equals(f9));
+        }
+
+        [TestMethod]
+        public void otherInvalid()
+        {
+            Formula f = new Formula("2 / 0");
+            Assert.IsTrue(f.Evaluate(look) is FormulaError);
+            Formula f2 = new Formula("! + 3");
+            Assert.IsTrue(f2.Evaluate(look) is FormulaError);
+        }
+
+        [TestMethod]
+        public void toStringTest()
+        {
+            Formula f = new Formula("x + Y");
+            Formula f2 = new Formula("x + Y", normal, s => true);
+            Assert.IsFalse(f.ToString().Equals(f2.ToString()));
+            Assert.AreEqual("x+Y", f.ToString());   
+            Assert.AreEqual("X+Y", f2.ToString());
         }
     }
 }
