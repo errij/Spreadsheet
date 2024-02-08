@@ -89,13 +89,12 @@ namespace SpreadsheetUtilities
         {
             formulaContainer = new List<string>();  
             IEnumerable<string> temp = GetTokens(formula);
-            string check = ""; //temporary string 
 
+            if (formula.Equals("")) throw new FormulaFormatException("Formula is empty!");
             foreach (var item in temp)
             {
                 if (CheckExpression(item) == -1)
                 {
-                    if(int.TryParse(check, out _)) throw new FormulaFormatException($"not a valid item: {item}"); //checks invalid var name
                     if (!isValid(item)) throw new FormulaFormatException($"not a valid item: {item}"); //isValid delegate
 
                     try
@@ -108,13 +107,12 @@ namespace SpreadsheetUtilities
                         throw new FormulaFormatException($"not a item to normalize: {item}");
                     }
                 }
-                else //not a variable
+                else
                 {
                     formulaContainer.Add(item);
                 }
-
-                check = item;//to check a variable is valid
             }
+            checkFormula(formulaContainer);
         }
 
         /// <summary>
@@ -285,7 +283,7 @@ namespace SpreadsheetUtilities
         /// </summary>
         public IEnumerable<String> GetVariables()
         {
-            List<string> temp = new List<string> ();
+            HashSet<string> temp = new HashSet<string> ();
 
             foreach(var item in formulaContainer)
             {
@@ -471,6 +469,42 @@ namespace SpreadsheetUtilities
             {
                 throw new ArgumentException($"{expression} is a no-no expression!");
             }
+        }
+
+        private static void checkFormula(List<string> formula)
+        {
+            string temp = ""; //temporary string to check
+            int leftParCheck = 0;
+            int rightParCheck = 0;
+            if(CheckExpression(formula[formula.Count - 1]) == 1 || CheckExpression(formula[formula.Count - 1]) == 2) throw new FormulaFormatException("there is an extra operator!");
+            foreach (string s in formula)
+            {
+                if (CheckExpression(s) == -1)
+                {
+                    if (CheckExpression(temp) == 0) throw new FormulaFormatException($"Not a valid variable: {temp}{s}");
+                }
+                else if (CheckExpression(s) == 0)
+                {
+                    if (CheckExpression(temp) == 0 || CheckExpression(temp) == 4) throw new FormulaFormatException($"Not a valid format: {temp} and {s}");
+                }
+                else if (CheckExpression(s) == 1 || CheckExpression(s) == 2)
+                {
+                    if (CheckExpression(temp) == 1 || CheckExpression(temp) == 2) throw new FormulaFormatException($"Not a valid format: {temp} and {s}");
+                }
+                else if (CheckExpression(s) == 3)
+                {
+                    leftParCheck++;
+                    if(CheckExpression(temp) == 0 || CheckExpression(temp) == 4) throw new FormulaFormatException($"Not a valid format: {temp} and {s}");
+                }
+                else if (CheckExpression(s) == 4)
+                {
+                    rightParCheck++;
+                    if(CheckExpression(temp) == 1 || CheckExpression(temp) == 2) throw new FormulaFormatException($"Not a valid format: {temp} and {s}");
+                }
+
+                temp = s;
+            }
+            if (leftParCheck != rightParCheck) throw new FormulaFormatException("Check parenthesis!");
         }
     }
 
