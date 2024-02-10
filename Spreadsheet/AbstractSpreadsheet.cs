@@ -208,10 +208,6 @@ namespace SS
         /// values depend directly on the value of the named cell. 
         /// </summary>
         /// 
-        /// <exception cref="ArgumentNullException"> 
-        ///   If the name is null, throw an ArgumentNullException.
-        /// </exception>
-        /// 
         /// <exception cref="InvalidNameException"> 
         ///   If the name is null or invalid, throw an InvalidNameException
         /// </exception>

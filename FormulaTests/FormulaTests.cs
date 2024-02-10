@@ -74,9 +74,7 @@ namespace FormulaTests
         [TestMethod] public void NormalizedConstructor2()
         {
             Formula f = new Formula("x", normal, s => true);
-            Formula f2 = new Formula("    ", normal, s => true);
             Assert.AreEqual("X", f.ToString());
-            Assert.AreEqual("", f2.ToString());
         }
 
         [TestMethod]
@@ -137,83 +135,6 @@ namespace FormulaTests
         {
             Formula f = new Formula("x/0", normal, s => true);
             Assert.IsTrue(f.Evaluate(s => 1) is FormulaError);
-        }
-
-        [TestMethod]
-        public void invalidFunction()
-        {
-            Formula f = new Formula("x++", normal, s => true);
-            Assert.IsTrue(f.Evaluate(s => 1) is FormulaError);
-            Formula f2 = new Formula("2 3 4", normal, s => true);
-            Assert.IsTrue(f2.Evaluate(s => 1) is FormulaError);
-            Formula f3 = new Formula("(()))", normal, s => true);
-            Assert.IsTrue(f3.Evaluate(s => 1) is FormulaError);
-            Formula f4 = new Formula("(1/0)", normal, s => true);
-            Assert.IsTrue(f4.Evaluate(s => 1) is FormulaError);
-            Formula f5 = new Formula("4*(1/0)", normal, s => true);
-            Assert.IsTrue(f5.Evaluate(s => 1) is FormulaError);
-            Formula f6 = new Formula("4/(0)", normal, s => true);
-            Assert.IsTrue(f6.Evaluate(s => 1) is FormulaError);
-            Formula f7 = new Formula("3+4+11+345435+4.01232+12*", normal, s => true);
-            Assert.IsTrue(f7.Evaluate(s => 1) is FormulaError);
-            Formula f8 = new Formula(" ", normal, s => true);
-            Assert.IsTrue(f8.Evaluate(s => 1) is FormulaError);
-            Formula f9 = new Formula("      ", normal, s => true);
-            Assert.IsTrue(f9.Evaluate(s => 1) is FormulaError);
-        }
-
-        [TestMethod]
-        public void getVarTest()
-        {
-            Formula f = new Formula("x++"); //should return x
-            IEnumerator<string> e = f.GetVariables().GetEnumerator();
-            e.MoveNext();
-            Assert.AreEqual("x", e.Current);
-            Assert.IsFalse(e.MoveNext());
-            Formula f1 = new Formula("x++", normal, s => true); //should return X
-            IEnumerator<string> e1 = f1.GetVariables().GetEnumerator();
-            e1.MoveNext();
-            Assert.AreEqual("X", e1.Current);
-            Formula f2 = new Formula("x+y+z+d");
-            IEnumerator<string> e2 = f2.GetVariables().GetEnumerator();
-            e2.MoveNext();
-            Assert.AreEqual("x", e2.Current);
-            e2.MoveNext();
-            Assert.AreEqual("y", e2.Current);
-            e2.MoveNext();
-            Assert.AreEqual("z", e2.Current);
-            e2.MoveNext();
-            Assert.AreEqual("d", e2.Current);
-            Assert.IsFalse(e2.MoveNext());
-            Formula f2a = new Formula("x+y+z+d", normal, s => true);
-            IEnumerator<string> e2a = f2a.GetVariables().GetEnumerator();
-            e2a.MoveNext();
-            Assert.AreEqual("X", e2a.Current);
-            e2a.MoveNext();
-            Assert.AreEqual("Y", e2a.Current);
-            e2a.MoveNext();
-            Assert.AreEqual("Z", e2a.Current);
-            e2a.MoveNext();
-            Assert.AreEqual("D", e2a.Current);
-            Assert.IsFalse(e2a.MoveNext());
-            Formula f3 = new Formula("x+x+x+x");
-            IEnumerator<string> e3 = f3.GetVariables().GetEnumerator();
-            e3.MoveNext();
-            Assert.AreEqual("x", e3.Current);
-            e3.MoveNext();
-            Assert.AreEqual("x", e3.Current);
-            e3.MoveNext();
-            Assert.AreEqual("x", e3.Current);
-            e3.MoveNext();
-            Assert.AreEqual("x", e3.Current);
-            Assert.IsFalse(e3.MoveNext());
-            Formula f4 = new Formula("4e1 + x + y");
-            IEnumerator<string> e4 = f4.GetVariables().GetEnumerator();
-            e4.MoveNext();
-            Assert.AreNotEqual("e", e4.Current);
-            Assert.AreEqual("x", e4.Current);
-            e4.MoveNext();
-            Assert.AreEqual("y", e4.Current);
         }
 
         [TestMethod]

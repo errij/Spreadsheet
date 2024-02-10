@@ -68,6 +68,18 @@ namespace SpreadSheetCell
             this.value = value;
         }
 
+        public override int GetHashCode()
+        {
+            string st = name + content.ToString();
+
+            return st.GetHashCode();  
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return this.GetHashCode() == obj.GetHashCode();
+        }
+
         /// <summary>
         /// Check content is valid.
         /// See class header

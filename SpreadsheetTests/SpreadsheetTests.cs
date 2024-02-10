@@ -125,7 +125,19 @@ namespace SpreadsheetTests
         {
             Cell cell = new Cell("a", new HashSet<Formula> { new Formula("x + 2") });
         }
-
+        [TestMethod]
+        [TestCategory("Cell test")]
+        public void cellHashCodeTest()
+        {
+            HashSet<Cell> set = new HashSet<Cell>{ new Cell("A1", 1.0), new Cell("B1", 2.0)};
+            set.Remove(new Cell("A1", 1.0));
+            List<string> check = new List<string>();    
+            foreach(Cell cell in set)
+            {
+                check.Add(cell.getName());
+            }
+            Assert.IsFalse(check.Contains("A1"));
+        }
         [TestMethod]
         [TestCategory("Spreadsheet Test")]
         public void spreadsheetSetTest()

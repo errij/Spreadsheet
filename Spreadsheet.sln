@@ -20,15 +20,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Formula", "Formula\Formula.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FormulaTests", "FormulaTests\FormulaTests.csproj", "{E3468776-EFC4-43DA-805B-E82D4325BF22}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestProject1", "TestProject1\TestProject1.csproj", "{C65B22C1-7ECD-4615-A6CF-6AE75409397B}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spreadsheet", "Spreadsheet\Spreadsheet.csproj", "{657EF34C-6A15-4941-BCA9-560A6FD97B4F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpreadSheetMethods", "Methods\SpreadSheetMethods.csproj", "{7FB5A0F1-1432-4702-8BBE-08CE9BDF4551}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpreadSheetMethods", "Methods\SpreadSheetMethods.csproj", "{7FB5A0F1-1432-4702-8BBE-08CE9BDF4551}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpreadSheetCell", "Cells\SpreadSheetCell.csproj", "{EB943E9F-8940-4918-97E6-D74DC775C26C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpreadSheetCell", "Cells\SpreadSheetCell.csproj", "{EB943E9F-8940-4918-97E6-D74DC775C26C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpreadsheetTests", "SpreadsheetTests\SpreadsheetTests.csproj", "{EAF05B6E-D067-4274-AB4B-7E054F89A65C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpreadsheetTests", "SpreadsheetTests\SpreadsheetTests.csproj", "{EAF05B6E-D067-4274-AB4B-7E054F89A65C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -60,10 +58,6 @@ Global
 		{E3468776-EFC4-43DA-805B-E82D4325BF22}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E3468776-EFC4-43DA-805B-E82D4325BF22}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E3468776-EFC4-43DA-805B-E82D4325BF22}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C65B22C1-7ECD-4615-A6CF-6AE75409397B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C65B22C1-7ECD-4615-A6CF-6AE75409397B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C65B22C1-7ECD-4615-A6CF-6AE75409397B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C65B22C1-7ECD-4615-A6CF-6AE75409397B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{657EF34C-6A15-4941-BCA9-560A6FD97B4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{657EF34C-6A15-4941-BCA9-560A6FD97B4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{657EF34C-6A15-4941-BCA9-560A6FD97B4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
