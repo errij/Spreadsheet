@@ -316,22 +316,26 @@ namespace SS
 
 
         /// <summary>
-        /// A helper for the GetCellsToRecalculate method.
-        /// 
-        ///   -- You should fully comment what is going on below using XML tags as appropriate --
+        /// A recursive method to generate the list of dependents
+        /// and detect a circular dependency
         /// </summary>
+        /// <param name="start">start node</param>
+        /// <param name="name">current node</param>
+        /// <param name="visited">visited node</param>
+        /// <param name="changed">list of dependents</param>
+        /// <exception cref="CircularException"></exception>
         private void Visit(String start, String name, ISet<String> visited, LinkedList<String> changed)
         {
-            visited.Add(name);
+            visited.Add(name); //visited
             foreach (String n in GetDirectDependents(name))
             {
-                if (n.Equals(start))
+                if (n.Equals(start)) //circular dependency
                 {
                     throw new CircularException();
                 }
                 else if (!visited.Contains(n))
                 {
-                    Visit(start, n, visited, changed);
+                    Visit(start, n, visited, changed); //recursive method to move to next node
                 }
             }
             changed.AddFirst(name);
