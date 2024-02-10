@@ -26,7 +26,7 @@ namespace SpreadSheetCell
         /// <exception cref="ArgumentException">if name or content is invalid</exception>
         public Cell(string name, object content)
         {
-            if (!Methods.CheckVarName(name)) throw new ArgumentException($"Invalid name: {name}");
+            if (!Extension.CheckVarName(name)) throw new ArgumentException($"Invalid name: {name}");
             checkContent(content);
             this.name = name;
             this.content = content;

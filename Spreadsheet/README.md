@@ -13,6 +13,8 @@ Copyright:	CS 3500 & Minseo Kim
 # Comments:
 
 This project construct a spreadsheet that is capable to store cells and their contents.
+This project contains Cell class represents a cell that contains name, content, and value.
+This project contains extension method that are used in different classes within the project.
 
 # Assignment Specifric Topics
 

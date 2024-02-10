@@ -4,7 +4,7 @@
     ///This class is a collection of methods that are used multiple times
     ///throughout the classes of the Spreadsheet solution.
     /// </summary>
-    public class Methods
+    public class Extension
     {
         /// <summary>
         /// Check whether variable name is valid or invalid

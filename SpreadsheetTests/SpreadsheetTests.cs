@@ -70,16 +70,16 @@ namespace SpreadsheetTests
         [TestCategory("Method test")]
         public void nameValidityTest()
         {
-            Assert.IsTrue(Methods.CheckVarName("A1"));
-            Assert.IsFalse(Methods.CheckVarName("1A"));
-            Assert.IsFalse(Methods.CheckVarName("11"));
-            Assert.IsTrue(Methods.CheckVarName("___!"));
-            Assert.IsFalse(Methods.CheckVarName(""));
-            Assert.IsFalse(Methods.CheckVarName(null));
-            Assert.IsFalse(Methods.CheckVarName("     "));
-            Assert.IsTrue(Methods.CheckVarName("a1"));
-            Assert.IsTrue(Methods.CheckVarName("aaaaaaaaaaaaaa2352343256@##!!__1"));
-            Assert.IsFalse(Methods.CheckVarName("&11"));
+            Assert.IsTrue(Extension.CheckVarName("A1"));
+            Assert.IsFalse(Extension.CheckVarName("1A"));
+            Assert.IsFalse(Extension.CheckVarName("11"));
+            Assert.IsTrue(Extension.CheckVarName("___!"));
+            Assert.IsFalse(Extension.CheckVarName(""));
+            Assert.IsFalse(Extension.CheckVarName(null));
+            Assert.IsFalse(Extension.CheckVarName("     "));
+            Assert.IsTrue(Extension.CheckVarName("a1"));
+            Assert.IsTrue(Extension.CheckVarName("aaaaaaaaaaaaaa2352343256@##!!__1"));
+            Assert.IsFalse(Extension.CheckVarName("&11"));
         }
 
         [TestMethod]

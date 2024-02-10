@@ -39,7 +39,7 @@ namespace SS
         /// </returns>
         public override object GetCellContents(string name)
         {
-            if (!Methods.CheckVarName(name)) throw new InvalidNameException(); //check name
+            if (!Extension.CheckVarName(name)) throw new InvalidNameException(); //check name
 
             foreach (var cell in cells)
             {
