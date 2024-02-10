@@ -17,7 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Cells\SpreadSheetCell.csproj" />
     <ProjectReference Include="..\DependencyGraph\DependencyGraph.csproj" />
     <ProjectReference Include="..\Formula\Formula.csproj" />
     <ProjectReference Include="..\Methods\SpreadSheetMethods.csproj" />
