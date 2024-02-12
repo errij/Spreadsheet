@@ -68,6 +68,10 @@ namespace SpreadSheetCell
             this.value = value;
         }
 
+        /// <summary>
+        /// retrieve a hashcode of the cell using content and name
+        /// </summary>
+        /// <returns>Hashcode</returns>
         public override int GetHashCode()
         {
             string st = name + content.ToString();
@@ -75,6 +79,11 @@ namespace SpreadSheetCell
             return st.GetHashCode();  
         }
 
+        /// <summary>
+        /// determine equality of cell using hashcode
+        /// </summary>
+        /// <param name="obj">object to compare</param>
+        /// <returns>true if equal false otherwise</returns>
         public override bool Equals(object? obj)
         {
             return this.GetHashCode() == obj.GetHashCode();
