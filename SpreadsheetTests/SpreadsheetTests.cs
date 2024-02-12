@@ -7,6 +7,9 @@ using System.Linq;
 
 namespace SpreadsheetTests
 {
+    /// <summary>
+    /// This is test class of Spreadsheet
+    /// </summary>
     [TestClass]
     public class SpreadsheetTests
     {
